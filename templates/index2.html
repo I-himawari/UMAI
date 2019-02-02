@@ -1,0 +1,140 @@
+<html>
+<head>
+  <title>UMAI</title>
+  <meta name="viewport" content="width=device-width">
+  <link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c|Nunito" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+  <style>
+[data-visibility="false"]{
+  display: none;
+}
+body{
+  font-family: 'Montserrat', 'M PLUS Rounded 1c', sans-serif;
+  background-image: linear-gradient(#fff7ee, #ffdeba);
+}
+[data-yes], [data-no]{
+  cursor: pointer;
+  display: inline-block;
+  background-color: rgba(128, 128, 128, 0.25);
+  color: #888888;
+  padding: 2px 4px;
+  margin: 2px;
+}
+input:checked ~ .changer [data-yes],
+input:not(:checked) ~ .changer [data-no]{
+  color: #fff;
+  background-color: #ff8400;
+}
+ul{
+  padding: 0;
+  margin-bottom: 50px;
+}
+li{
+  list-style-type: none;
+}
+input{
+  visibility: hidden;
+  width: 0;
+}
+li{
+  display: flex;
+  margin: 10px 0;
+}
+label{
+  flex: 1 1 auto;
+}
+.changer{
+  flex: 0 0 85px;
+  display: block;
+}
+#exec{
+  width: 200px;
+  display: block;
+  margin: auto;
+  font-size: 20px;
+  color: #fff;
+  background-color: #ff8400;
+}
+form, #result{
+  max-width: 500px;
+  margin: auto;
+}
+img{
+  width: 100%;
+  max-width: 500px;
+  display: block;
+  margin: auto;
+}
+
+  </style>
+  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+  <script>
+$(document).ready(function(){
+  $('[data-yes]').click(function(){
+     $(this).closest('li').find('input').prop('checked', true);
+  });
+  $('[data-no]').click(function(){
+     $(this).closest('li').find('input').prop('checked', false);
+  });
+  $('#exec').click(async function(e){
+    e.preventDefault();
+    $('form').attr('data-visibility', false);
+    $('#result').attr('data-visibility', true);
+    var checkedValues = [
+     $('#q1').prop('checked'),
+     $('#q2').prop('checked'),
+     $('#q3').prop('checked'),
+     $('#q4').prop('checked'),
+     $('#q5').prop('checked'),
+     $('#q6').prop('checked'),
+     $('#q7').prop('checked'),
+     $('#q7').prop('checked'),
+     $('#q8').prop('checked'),
+     $('#q9').prop('checked')];
+    console.log(checkedValues)
+
+    const responseValue = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        personality: checkedValues
+    })
+    }
+    const response = await fetch(
+    '/api/',
+    responseValue
+    )
+    const value = await response.json()
+
+    document.getElementById("result_image").src = "static/" + value["result_url"]
+    document.getElementById("result_inner_text").innerText = value["result"]
+
+    
+    return false;
+  });
+});
+  </script>
+</head>
+<body>
+  <form id="form" data-visibility="true">
+    <h1>How Are You Like?</h1>
+    <ul>
+      <li><label><span>ものわかりが良いほうだ。</span></label><input type="checkbox" id="q1"/><span class="changer"><span data-yes>YES</span><span data-no>NO</span></span></li>
+      <li><label><span>抽象的な考えには興味がある。</span></label><input type="checkbox" id="q2"/><span class="changer"><span data-yes>YES</span><span data-no>NO</span></li>
+      <li><label><span>アイディアが豊富である。</span></label><input type="checkbox" id="q3"/><span class="changer"><span data-yes>YES</span><span data-no>NO</span></li>
+      <li><label><span>高い身分や名声を手に入れたいと思う。</span></label><input type="checkbox" id="q4"/><span class="changer"><span data-yes>YES</span><span data-no>NO</span></li>
+      <li><label><span>他人から注目されたいと思う。</span></label><input type="checkbox" id="q5"/><span class="changer"><span data-yes>YES</span><span data-no>NO</span></li>
+      <li><label><span>自分の行動の善悪に興味がある。</span></label><input type="checkbox" id="q6"/><span class="changer"><span data-yes>YES</span><span data-no>NO</span></li>
+      <li><label><span>盛り上げ役である。</span></label><input type="checkbox" id="q7"/><span class="changer"><span data-yes>YES</span><span data-no>NO</span></li>
+      <li><label><span>おしゃべりだ。</span></label><input type="checkbox" id="q8"/><span class="changer"><span data-yes>YES</span><span data-no>NO</span></li>
+      <li><label><span>すぐにストレスがたまってしまう。</span></label><input type="checkbox" id="q9"/><span class="changer"><span data-yes>YES</span><span data-no>NO</span></li>
+    </ul>
+    <button id="exec">GO!</button>
+  </form>
+  <div id="result" data-visibility="false">
+    <h1>Your Favorite Food Might Be...</h1>
+    <h1 id="result_inner_text"></h1>
+    <img id="result_image"/>
+  </div>
+</body>
+</html>

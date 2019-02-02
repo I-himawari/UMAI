@@ -9,14 +9,16 @@ CORS(app)
 
 @app.route('/', methods=['GET'])
 def index_page():
-    return render_template('index.html')
+    return render_template('index2.html')
 
 @app.route('/api/', methods=['POST'])
 def api_system():
     content = request.json
     data = dict()
     
-    data["result"] = best_goods_per_personality(content["personality"])
+    result_data = best_goods_per_personality(content["personality"])
+    data["result"] = result_data[0]
+    data["result_url"] = result_data[1]
 
     response = app.response_class(
         response=json.dumps(data),
